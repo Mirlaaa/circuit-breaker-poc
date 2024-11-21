@@ -23,4 +23,6 @@ Portanto, evitaremos que o serviço com instabilidade tenha uma sobrecarga de re
 
 ### Estado Meio Aberto
 Dado um período que especificaremos, o sistema acionará o estado **Meio Aberto**, que permitirá que um número limitado de requisições sejam enviados para o serviço. As requisições serão então monitoradas, dependendo do resultado das respostas o sistema irá acionar o estado de **Fechado** se obtiverem resposta de sucesso. Caso contrário, o sistema voltará ao estado **Aberto**, pois identificará que o serviço continua indisponível.
-E assim seguirá o fluxo de troca de estado.
+
+### Implementação do Circuit Breaker com pybreaker
+Nesse projeto trabalhamos com a biblioteca [pybreaker](https://pypi.org/project/pybreaker/) para implementação do circuito.
