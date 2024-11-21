@@ -1,4 +1,6 @@
-from pybreaker import CircuitBreaker
+from pybreaker import CircuitBreaker, CircuitBreakerError
+
+CIRCUIT_BREAKER_ERROR = CircuitBreakerError
 
 failure_threshold = 3
 success_threshold = 5
