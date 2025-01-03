@@ -5,6 +5,7 @@ from http import HTTPStatus
 from django.http import JsonResponse
 from core.circuit_breaker import breaker, CIRCUIT_BREAKER_ERROR
 from django.conf import settings
+from django.core.cache import cache
 
 HOST_SERVER = settings.HOST_SERVER
 
@@ -22,6 +23,7 @@ def call_endpoint():
     return response
 
 def failure(request):
+
     return JsonResponse(data={"message":"Failure"}, status=HTTPStatus.INTERNAL_SERVER_ERROR)
 
 def slower_request(request):
@@ -33,6 +35,8 @@ def slower_request(request):
     return JsonResponse(data={"message":"Successful request!"}, status=HTTPStatus.OK)
 
 def success(request):
+    cache.set("cache_response_circuit", {"data": f"request was made in {time.ctime()}"})
+
     return JsonResponse(data={"message":"Successful request!"}, status=HTTPStatus.OK)
 
 def index(request):
@@ -40,6 +44,11 @@ def index(request):
         response = call_endpoint()
         return JsonResponse(data=response.json(), status=response.status_code)
     except CIRCUIT_BREAKER_ERROR:
+        #aqui posso retornar resposta em cache
+        if cache.get("cache_response_circuit") is not None:
+            print("Got the cached result")
+            data = cache.get("cache_response_circuit")
+            return JsonResponse(data)
         return JsonResponse(data={"message":"Circuit breaker is open!"}, status=HTTPStatus.SERVICE_UNAVAILABLE)
     except Exception as e:
         print(f'Error: {e}')
